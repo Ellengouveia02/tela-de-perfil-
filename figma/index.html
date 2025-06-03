@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil do Usuário</title>
+  <style>
+    :root {
+      --rosa-claro: #f9dce2;
+      --rosa-escuro: #e9aab6;
+      --azul-claro: #e4edee;
+      --azul-medio: #a6c0c5;
+      --cinza-fundo: #f2f2f2;
+      --vermelho: #d9534f;
+      --azul-botao: #7bb4cc;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      margin: 0;
+      background: #333;
+      color: #000;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-box {
+      background: var(--azul-claro);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      min-width: 300px;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .btn {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-sim {
+      background: var(--azul-botao);
+      color: #fff;
+    }
+
+    .btn-nao {
+      background: var(--vermelho);
+      color: #fff;
+    }
+
+    .editar-box {
+      background: var(--azul-claro);
+      padding: 30px;
+      position: relative;
+      width: 400px;
+      border-radius: 10px;
+    }
+
+    .fechar {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .editar-box form input {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .btn-salvar {
+      background: var(--rosa-escuro);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .perfil-container {
+      background: white;
+      margin: 30px auto;
+      max-width: 900px;
+      border: 5px solid #00aaff;
+      border-radius: 8px;
+      font-family: 'Georgia', serif;
+    }
+
+    header {
+      background: var(--rosa-claro);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    nav a {
+      color: #000;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .logout {
+      background: var(--azul-claro);
+      color: #000;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      font-family: cursive;
+    }
+
+    .dados-usuario {
+      padding: 30px 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .dados-usuario h2 {
+      grid-column: span 2;
+      text-align: center;
+      font-size: 20px;
+      font-family: cursive;
+    }
+
+    .dados-usuario input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+
+    .dados-usuario .btn-editar,
+    .dados-usuario .btn-excluir {
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      border: none;
+      margin-top: 10px;
+      width: 120px;
+    }
+
+    .btn-editar {
+      background: var(--azul-botao);
+      color: white;
+    }
+
+    .btn-excluir {
+      background: var(--rosa-escuro);
+      color: white;
+    }
+
+    .historico-compras {
+      padding: 20px 40px;
+    }
+
+    .historico-compras h3 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Georgia', serif;
+    }
+
+    table th, table td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+  <script>
+    function abrirModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+    function fecharModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    function confirmarEdicao() {
+      fecharModal('modalConfirmar');
+      abrirModal('modalSucesso');
+      setTimeout(() => fecharModal('modalSucesso'), 2000);
+    }
+  </script>
+</head>
+<body>
+  <!-- Modal Sim/Não -->
+  <div id="modalConfirmar" class="modal">
+    <div class="modal-box">
+      <p>Você tem certeza que deseja editar seus dados?</p>
+      <div class="btn-group">
+        <button class="btn btn-sim" onclick="confirmarEdicao()">Sim</button>
+        <button class="btn btn-nao" onclick="fecharModal('modalConfirmar')">Não</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Sucesso -->
+  <div id="modalSucesso" class="modal">
+    <div class="modal-box">
+      <p>Seus dados foram editados com sucesso!</p>
+    </div>
+  </div>
+
+  <!-- Modal de Edição de Dados -->
+  <div id="modalEditar" class="modal">
+    <div class="editar-box">
+      <button class="fechar" onclick="fecharModal('modalEditar')">&times;</button>
+      <form>
+        <input type="text" placeholder="Nome">
+        <div style="display: flex; gap: 10px;">
+          <input type="text" placeholder="Número">
+          <input type="password" placeholder="Senha">
+        </div>
+        <input type="email" placeholder="Email">
+        <div style="display: flex; gap: 10px;">
+          <input type="text" placeholder="CEP">
+          <input type="text" placeholder="Cidade">
+          <input type="text" placeholder="Número">
+        </div>
+        <input type="text" placeholder="Logradouro">
+        <input type="text" placeholder="Complemento">
+        <button type="button" class="btn-salvar" onclick="fecharModal('modalEditar'); abrirModal('modalConfirmar')">Alterar produto</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="perfil-container">
+    <header>
+      <div class="logo">
+        <img src="https://via.placeholder.com/60x40" alt="Logo">
+      </div>
+      <nav>
+        <a href="#">Home</a>
+        <a href="#">Produtos</a>
+        <a href="#">Dúvidas</a>
+        <button class="logout">Fazer login/cadastro</button>
+      </nav>
+    </header>
+
+    <section class="dados-usuario">
+      <h2>Dados do usuário</h2>
+      <input type="text" placeholder="Nome">
+      <input type="text" placeholder="País">
+      <input type="text" placeholder="Número">
+      <input type="text" placeholder="Senha">
+      <input type="email" placeholder="Email">
+      <input type="text" placeholder="CEP">
+      <input type="text" placeholder="Estado">
+      <input type="text" placeholder="Cidade">
+      <input type="text" placeholder="Logradouro">
+      <input type="text" placeholder="Complemento">
+      <button class="btn-editar" onclick="abrirModal('modalEditar')">Editar dados</button>
+      <button class="btn-excluir">Excluir conta</button>
+    </section>
+
+    <section class="historico-compras">
+      <h3>Histórico de compra</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Cód. Compra</th>
+            <th>Data da compra</th>
+            <th>Itens comprados</th>
+            <th>Valor do item</th>
+            <th>Valor total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0000</td>
+            <td>21/10/0000</td>
+            <td>Mochila c/ rodinha</td>
+            <td>000,00</td>
+            <td>000,00</td>
+          </tr>
+          <tr>
+            <td>0000</td>
+            <td>21/10/0000</td>
+            <td>
+              Mochila c/ rodinha<br>
+              Mochila<br>
+              Mochila maternidade
+            </td>
+            <td>
+              000,00<br>
+              000,00<br>
+              000,00
+            </td>
+            <td>000,00</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</body>
+</html>
+
